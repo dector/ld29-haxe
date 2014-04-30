@@ -1,10 +1,10 @@
 package io.github.dector.ld29;
 
+import flixel.util.FlxTimer;
 import io.github.dector.ld29.Level.ShotResult;
 import flixel.effects.particles.FlxTypedEmitter;
 import flixel.FlxObject;
 import flixel.util.FlxRandom;
-import haxe.Timer;
 import flixel.text.FlxText;
 import flixel.group.FlxGroup;
 import flixel.FlxG;
@@ -120,11 +120,11 @@ class GameState extends BaseState {
             plant.animation.add("stand", [ 1 ], 0, true);
             plant.animation.add("wave", [ 0, 1, 2, 1], 1, true);
 
-            var updatePlant = function() {
+            var updatePlant = function(timer) {
                 plant.animation.play("wave", true, FlxRandom.intRanged(0, 2));
             };
 
-            Timer.delay(updatePlant, FlxRandom.intRanged(0, 2000));
+	        new FlxTimer().start(FlxRandom.floatRanged(0, 2), updatePlant);
 
             var scale = FlxRandom.intRanged(2, 10);
             plant.width = 12 * scale;
@@ -151,11 +151,11 @@ class GameState extends BaseState {
 		if (FlxG.keys.pressed.ESCAPE) {
 			MusicManager.instance.pause();
 
-			#if debug
+			/*#if debug
 			    Utils.exit();
-			#else
+			#else*/
 				FlxG.switchState(new SplashState());
-			#end
+			/*#end*/
 		}
 
 		//#if debug
@@ -212,10 +212,10 @@ class GameState extends BaseState {
 						infoText.text = Level.current.getFailText();
 					}
 
-					var restoreInfo = function() {
+					var restoreInfo = function(timer) {
 						infoText.text = Level.current.getGoalText();
 					}
-					Timer.delay(restoreInfo, 2000);
+					new FlxTimer().start(2, restoreInfo);
 				case Level.ShotResultType.CORRECT:
 					if (shotResult.hasMessage()) {
 						infoText.text = shotResult.getMessage();
@@ -223,10 +223,10 @@ class GameState extends BaseState {
 						infoText.text = Level.current.getCorrectText();
 					}
 
-					var restoreInfo = function() {
+					var restoreInfo = function(timer) {
 						infoText.text = Level.current.getGoalText();
 					}
-					Timer.delay(restoreInfo, 1000);
+					new FlxTimer().start(1, restoreInfo);
 				case Level.ShotResultType.LEVEL_FINISHED:
 					if (shotResult.hasMessage()) {
 						infoText.text = shotResult.getMessage();
@@ -234,10 +234,10 @@ class GameState extends BaseState {
 						infoText.text = Level.current.getCorrectText();
 					}
 
-					var restoreInfo = function() {
-						infoText.text = Level.current.getGoalText();
+					var nextLevelWithTimer = function(timer) {
+						nextLevel();
 					}
-					Timer.delay(nextLevel, 1000);
+					new FlxTimer().start(1, nextLevelWithTimer);
 					levelDone = true;
 			}
 		}
@@ -247,7 +247,7 @@ class GameState extends BaseState {
 
 	private function nextLevel(): Void {
 		if (Level.current.hasNextLevel()) {
-			FlxG.camera.fade(0x88000000, 1.5, false, gotoNextLevel);
+			FlxG.camera.fade(0x000000, 1.5, false, gotoNextLevel);
 		}
 	}
 
@@ -312,6 +312,7 @@ class GameState extends BaseState {
 	}
 
 	override public function onFocus(): Void {
+		// TODO not working
 		MusicManager.instance.pauseSoft();
 	}
 

@@ -26,7 +26,7 @@ class Level2 extends Level {
 			if (Std.is(object, Fish)) {
 				var fish = cast(object, Fish);
 				var fullInPointer = isObjectFullInPointer(cam, fish);
-				var bigEnough = fish.getSize2() >= 2;
+				var bigEnough = fish.getSize2() >= 3;
 				aimedOnBigFish = aimedOnBigFish || bigEnough;
 
 				if (fullInPointer && bigEnough && ! fish.hasPhoto) {

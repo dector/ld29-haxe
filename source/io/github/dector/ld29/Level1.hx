@@ -25,7 +25,7 @@ class Level1 extends Level {
 				var redFish = (fish.color & 0xffffff) == 0xff0000;
 				aimedOnRedFish = aimedOnRedFish || redFish;
 
-				if (fullInPointer) {
+				if (fullInPointer && aimedOnRedFish) {
 					result.setType(Level.ShotResultType.LEVEL_FINISHED);
 				} else if (! result.hasMessage()) {
 					result.setMessage("Fish isn't fully visible in camera");

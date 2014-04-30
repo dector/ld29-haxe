@@ -20,9 +20,9 @@ class Pointer extends FlxSprite {
 
 	public function makePhoto(shotResult: Level.ShotResult): Void {
 		if (shotResult.type == Level.ShotResultType.WRONG) {
-			FlxG.camera.flash(0x88eeeeee, 0.5);
+			FlxG.camera.flash(0xeeeeee, 0.5);
 		} else {
-			FlxG.camera.flash(0x88ffffff, 0.5);
+			FlxG.camera.flash(0xffffff, 0.5);
 		}
 	}
 }

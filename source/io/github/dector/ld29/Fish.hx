@@ -1,10 +1,10 @@
 package io.github.dector.ld29;
 
+import flixel.util.FlxTimer;
 import flixel.FlxObject;
 import flixel.effects.particles.FlxTypedEmitter;
 import flixel.FlxG;
 import flixel.util.FlxRandom;
-import flixel.effects.particles.FlxEmitter;
 import flixel.util.FlxPoint;
 import flixel.FlxSprite;
 
@@ -18,7 +18,6 @@ class Fish extends FlxSprite {
 
 	public var hasPhoto: Bool;
 
-	private var lastBubbleTime: Int;
 	private var emitter: FlxTypedEmitter<Bubble>;
 
 	public function new(facing: Int = FlxObject.NONE) {
@@ -74,11 +73,7 @@ class Fish extends FlxSprite {
 
 		// dirty = true;
 
-        #if flash
-        lastBubbleTime = flash.Lib.getTimer();
-        #else
-		lastBubbleTime = Std.int(Sys.time()) + FlxRandom.intRanged(1000, 4000);
-        #end
+		new FlxTimer().start(FlxRandom.floatRanged(1, 4), bubbleStart);
 	}
 
 	public function getSize2(): Int {
@@ -86,15 +81,15 @@ class Fish extends FlxSprite {
 	}
 
 	public function setSize2(size: Int): Void {
-		width = FISH_W * size;
-		height = FISH_H * size;
-
 		scale.x = size;
 		scale.y = size;
 
 		// FIXme bug fish is lagging
         origin.set(0, 0);
 		offset.set(0, 0);
+
+		width = FISH_W * size;
+		height = FISH_H * size;
 
 		emitterOffset.x = facing == FlxObject.LEFT ? size * 5 : width - size * 5;
 		emitterOffset.y = height - size * 4;
@@ -107,25 +102,21 @@ class Fish extends FlxSprite {
 
 		emitter.x = x + emitterOffset.x;
 		emitter.y = y + emitterOffset.y;
-
-        var time;
-        #if flash
-        time = flash.Lib.getTimer();
-        #else
-        time = Sys.time();
-        #end
-		var currentTime = Std.int(time);
-		if (lastBubbleTime <= currentTime) {
-			bubble();
-			lastBubbleTime = currentTime + FlxRandom.intRanged(2000, 5000);
-		}
 	}
 
-	private function bubble(): Void {
+	private function bubbleStart(timer: FlxTimer): Void {
+		bubble(true);
+	}
+
+	private function bubble(again: Bool = false): Void {
 		emitter.setXSpeed(-10, 10);
 		emitter.setYSpeed(-20, -70);
 		emitter.setRotation(10, 45);
 		emitter.start(false, 5, 0.1, FlxRandom.intRanged(1, emitter.maxSize));
+
+		if (again) {
+			new FlxTimer().start(FlxRandom.floatRanged(2, 5), bubbleStart);
+		}
 	}
 
 	public function getEmmiter(): FlxTypedEmitter<Bubble> {

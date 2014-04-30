@@ -31,7 +31,7 @@ class Level3 extends Level {
 				checkResult =  true;
 
 				var fullInPointer = isObjectFullInPointer(cam, fish);
-				var bigEnough = fish.getSize2() >= 2;
+				var bigEnough = fish.getSize2() >= 3;
 				aimedOnBigFish = aimedOnBigFish || bigEnough;
 
 				if (fullInPointer && ! fish.hasPhoto) {
