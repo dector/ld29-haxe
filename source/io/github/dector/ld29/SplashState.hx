@@ -51,7 +51,7 @@ class SplashState extends BaseState {
 		super.update();
 
 		if (FlxG.keys.pressed.R) {
-			//startLevel(new LevelLast());
+			startLevel(new LevelLast());
 		}
 
 		if (FlxG.keys.pressed.ESCAPE) {

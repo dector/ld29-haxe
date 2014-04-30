@@ -8,7 +8,7 @@ class Utils {
 		#if flash
 			return flash.Lib.getTimer();
         #else
-			return Sys.time();
+			return Std.int(Sys.time());
 		#end
 	}
 

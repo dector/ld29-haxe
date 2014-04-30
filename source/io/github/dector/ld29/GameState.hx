@@ -74,12 +74,10 @@ class GameState extends BaseState {
         MusicManager.instance.play();
         updateIndicators();
 
-//	if (Level.current.getClass() == LevelLast.class) {
-//	levelDone = true;
-//	pointer.visible = false;
-//	}
-//	}
-
+		if (Std.is(Level.current, LevelLast)) {
+			levelDone = true;
+			pointer.visible = false;
+		}
 	}
 
 	private function updateIndicators() {
@@ -166,6 +164,10 @@ class GameState extends BaseState {
 		}
 		//#end
 
+		if (FlxG.keys.pressed.R) {
+			FlxG.resetState();
+		}
+
 //	if (FlxG.debug) {
 //	if (FlxG.keys.R) {
 //	try {
@@ -235,7 +237,7 @@ class GameState extends BaseState {
 					var restoreInfo = function() {
 						infoText.text = Level.current.getGoalText();
 					}
-					Timer.delay(restoreInfo, 1000);
+					Timer.delay(nextLevel, 1000);
 					levelDone = true;
 			}
 		}
@@ -244,15 +246,14 @@ class GameState extends BaseState {
 	}
 
 	private function nextLevel(): Void {
-		var nextLevel = Level.current.getNextLevel;
-
-		if (nextLevel != null) {
+		if (Level.current.hasNextLevel()) {
 			FlxG.camera.fade(0x88000000, 1.5, false, gotoNextLevel);
 		}
 	}
 
 	private function gotoNextLevel(): Void {
-		Level.current = Type.createInstance(Level.current.getNextLevel(), []);
+		Level.current = Level.current.getNextLevel();
+
 		FlxG.resetState();
 	}
 

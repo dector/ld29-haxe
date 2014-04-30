@@ -7,8 +7,22 @@ class Level {
 
 	public static var current: Level;
 
+	/*private static var levelset: Array<Dynamic>;
+	private static var currentIndex: Int;
+
+	public static function getNext(): Class<Level> {
+		if (currentIndex < levelset.length) {
+			return levelset[currentIndex + 1];
+		} else {
+			return null;
+		}
+	}*/
+
 	public function __init__(): Void {
 		current = new Level0();
+		/*currentIndex = 0;
+		levelset = [ Type.typeof(Level0), Type.typeof(Level1), Type.typeof(Level2),
+			Type.typeof(Level3), Type.typeof(LevelLast) ];*/
 	}
 
     public function new() {
@@ -61,9 +75,17 @@ class Level {
 		return null;
 	}
 
-	public function getNextLevel(): Class<Level> {
+	public function hasNextLevel(): Bool {
+		return false;
+	}
+
+	public function getNextLevel(): Level {
 		return null;
 	}
+
+	/*public function getNextLevel<T : Level>(): Class<T> {
+		return null;
+	}*/
 
 }
 

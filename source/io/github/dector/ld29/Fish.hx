@@ -16,7 +16,7 @@ class Fish extends FlxSprite {
 	private var size: Int;
 	private var emitterOffset: FlxPoint;
 
-	private var hasPhoto: Bool;
+	public var hasPhoto: Bool;
 
 	private var lastBubbleTime: Int;
 	private var emitter: FlxTypedEmitter<Bubble>;
