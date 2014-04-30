@@ -1,5 +1,8 @@
 package io.github.dector.ld29;
 
+import io.github.dector.ld29.Level.ShotResult;
+import flixel.effects.particles.FlxTypedEmitter;
+import flixel.FlxObject;
 import flixel.util.FlxRandom;
 import haxe.Timer;
 import flixel.text.FlxText;
@@ -26,9 +29,6 @@ class GameState extends BaseState {
 	private var pointer: Pointer;
 
 	private var levelDone: Bool;
-
-	private var restoreInfoTimestamp: Int;
-	private var fadingTimestamp: Int;
 
 //	private ActionStarter actionStarter;
 
@@ -112,10 +112,6 @@ class GameState extends BaseState {
 	private function createPlants(): FlxGroup {
 		var plants = new FlxGroup();
 
-		//	if (actionStarter == null) {
-		//	actionStarter = new ActionStarter();
-		//	}
-
         var stepX = FlxG.width / Level.current.getMaxPlantsCount();
         var diffX = stepX / 2;
 
@@ -158,13 +154,17 @@ class GameState extends BaseState {
 			MusicManager.instance.pause();
 
 			#if debug
-			    #if ! flash
-				    Sys.exit(0);
-                #end
+			    Utils.exit();
 			#else
 				FlxG.switchState(new SplashState());
 			#end
 		}
+
+		//#if debug
+		if (FlxG.keys.pressed.D) {
+			FlxG.debugger.drawDebug = true;
+		}
+		//#end
 
 //	if (FlxG.debug) {
 //	if (FlxG.keys.R) {
@@ -196,59 +196,51 @@ class GameState extends BaseState {
 			updateIndicators();
 		}
 
-//	if (! levelDone && FlxG.mouse.justPressed()) {
-//	List<FlxObject> objects = getObjectsOnPhoto();
-//	Level.ShotResult shotResult = Level.current.makePhoto(pointer, objects);
-//
-//	pointer.makePhoto(shotResult);
-//
-//	switch (shotResult.type) {
-//	case WRONG:
-//	soundManager.playWrong();
-//	if (shotResult.hasMessage()) {
-//	infoText.setText(shotResult.getMessage());
-//	} else {
-//	infoText.setText(Level.current.getFailText());
-//	}
-//	restoreInfoTimestamp = System.currentTimeMillis() + 2000;
-//	break;
-//	case CORRECT:
-//	soundManager.playShot();
-//	if (shotResult.hasMessage()) {
-//	infoText.setText(shotResult.getMessage());
-//	} else {
-//	infoText.setText(Level.current.getCorrectText());
-//	}
-//	restoreInfoTimestamp = System.currentTimeMillis() + 1000;
-//	break;
-//	case LEVEL_FINISHED:
-//	soundManager.playShot();
-//	if (shotResult.hasMessage()) {
-//	infoText.setText(shotResult.getMessage());
-//	} else {
-//	infoText.setText(Level.current.getCorrectText());
-//	}
-//	restoreInfoTimestamp = Long.MAX_VALUE;
-//	fadingTimestamp = System.currentTimeMillis() + 1000;
-//	levelDone = true;
-//	break;
-//	}
-//	}
-//
-//	long currentTimestamp = System.currentTimeMillis();
-//	if (fadingTimestamp != 0 && fadingTimestamp <= currentTimestamp) {
-//	nextLevel();
-//	fadingTimestamp = 0;
-//	} else if (restoreInfoTimestamp != 0 && restoreInfoTimestamp <= currentTimestamp) {
-//	infoText.setText(Level.current.getGoalText());
-//	restoreInfoTimestamp = 0;
-//	}
-//
-//	updateFishes();
-//
-//	actionStarter.update();
-//	}
+		if (! levelDone && FlxG.mouse.justPressed) {
+			var objects = getObjectsOnPhoto();
+			var shotResult = Level.current.makePhoto(pointer, objects);
 
+			pointer.makePhoto(shotResult);
+
+			switch (shotResult.type) {
+				case Level.ShotResultType.WRONG:
+					if (shotResult.hasMessage()) {
+						infoText.text = shotResult.getMessage();
+					} else {
+						infoText.text = Level.current.getFailText();
+					}
+
+					var restoreInfo = function() {
+						infoText.text = Level.current.getGoalText();
+					}
+					Timer.delay(restoreInfo, 2000);
+				case Level.ShotResultType.CORRECT:
+					if (shotResult.hasMessage()) {
+						infoText.text = shotResult.getMessage();
+					} else {
+						infoText.text = Level.current.getCorrectText();
+					}
+
+					var restoreInfo = function() {
+						infoText.text = Level.current.getGoalText();
+					}
+					Timer.delay(restoreInfo, 1000);
+				case Level.ShotResultType.LEVEL_FINISHED:
+					if (shotResult.hasMessage()) {
+						infoText.text = shotResult.getMessage();
+					} else {
+						infoText.text = Level.current.getCorrectText();
+					}
+
+					var restoreInfo = function() {
+						infoText.text = Level.current.getGoalText();
+					}
+					Timer.delay(restoreInfo, 1000);
+					levelDone = true;
+			}
+		}
+
+		updateFishes();
 	}
 
 	private function nextLevel(): Void {
@@ -264,55 +256,65 @@ class GameState extends BaseState {
 		FlxG.resetState();
 	}
 
-//		// FIXME Dirty hack. Because reused fish sometimes is drawing incorrect for updated scale and size values
-//	private List<Fish> removedFishes = new ArrayList<Fish>();
-//	private List<Fish> newFishes = new ArrayList<Fish>();
-//
-//	private void updateFishes() {
-//	for (FlxBasic obj : fishes.members) {
-//	Fish fish = (Fish) obj;
-//
-//	if (! fish.onScreen()) {
-//	fish.kill();
-//	removedFishes.add(fish);
-//
-//	int facing = MathUtils.randomBoolean()
-//	? Fish.LEFT
-//	: Fish.RIGHT;
-//	newFishes.add(new Fish(facing));
-//	}
-//	}
-//
-//	if (! removedFishes.isEmpty()) {
-//	for (Fish fish : removedFishes) {
-//	fishes.remove(fish);
-//
-//	FlxEmitter emitter = fish.getEmmiter();
-//	fishEmmiters.remove(emitter);
-//	}
-//	removedFishes.clear();
-//	}
-//
-//	if (! newFishes.isEmpty()) {
-//	for (Fish fish : newFishes) {
-//	fishes.add(fish);
-//	fishEmmiters.add(fish.getEmmiter());
-//	}
-//	newFishes.clear();
-//	}
-//	}
-//
-//	public List<FlxObject> getObjectsOnPhoto() {
-//	List<FlxObject> objects = new ArrayList<FlxObject>();
-//
-//	for (FlxBasic obj : fishes.members) {
-//	Fish fish = (Fish) obj;
-//
-//	if (pointer.overlaps(fish)) {
-//	objects.add(fish);
-//	}
-//	}
-//
-//	return objects;
-//	}*/
+	// FIXME Dirty hack. Because reused fish sometimes is drawing incorrect for updated scale and size values
+	private var removedFishes = new List<Fish>();
+	private var newFishes = new List<Fish>();
+
+	private function updateFishes(): Void {
+		for (obj in fishes) {
+			var fish = cast(obj, Fish);
+
+			if (! fish.isOnScreen()) {
+				fish.kill();
+				removedFishes.add(fish);
+
+				var facing = FlxRandom.intRanged(0, 1) == 1
+					? FlxObject.LEFT : FlxObject.RIGHT;
+
+				newFishes.add(new Fish(facing));
+			}
+		}
+
+		if (! removedFishes.isEmpty()) {
+			for (fish in removedFishes) {
+				fishes.remove(fish);
+
+				var emitter = fish.getEmmiter();
+				fishEmmiters.remove(emitter);
+			}
+
+			removedFishes.clear();
+		}
+
+		if (! newFishes.isEmpty()) {
+			for (fish in newFishes) {
+				fishes.add(fish);
+				fishEmmiters.add(fish.getEmmiter());
+			}
+
+			newFishes.clear();
+		}
+	}
+
+	private function getObjectsOnPhoto(): List<FlxObject> {
+		var objects = new List<FlxObject>();
+
+		for (obj in fishes.members) {
+			var fish = cast(obj, Fish);
+
+			if (pointer.overlaps(fish)) {
+				objects.add(fish);
+			}
+		}
+
+		return objects;
+	}
+
+	override public function onFocus(): Void {
+		MusicManager.instance.pauseSoft();
+	}
+
+	override public function onFocusLost(): Void {
+		MusicManager.instance.playSoft();
+	}
 }

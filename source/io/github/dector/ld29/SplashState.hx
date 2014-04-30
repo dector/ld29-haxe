@@ -1,5 +1,7 @@
 package io.github.dector.ld29;
 
+import flixel.tweens.FlxTween;
+import flixel.tweens.FlxTween;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
@@ -53,10 +55,7 @@ class SplashState extends BaseState {
 		}
 
 		if (FlxG.keys.pressed.ESCAPE) {
-            #if ! flash
-			Sys.exit(0);
-            #else
-            #end
+            Utils.exit();
 		} else if (FlxG.keys.justPressed.ANY && ! FlxG.keys.pressed.F) {
 			startLevel(new Level0());
 		}
@@ -69,20 +68,13 @@ class SplashState extends BaseState {
 	}
 
 	private function flashFinished(): Void {
-        #if flash
-		fadingTime = Std.int(flash.Lib.getTimer()) + 1000;
-        #else
-		fadingTime = Std.int(Sys.time()) + 1000;
-        #end
+		fadingTime = Std.int(Utils.time()) + 1000;
 
 		instructionsText.visible = true;
 		controlsText.visible = true;
-		/*Tween.to(instructionsText, TweenSprite.SCALE_XY, .7f)
-				.target(1.2f, 1.2f)
-				.ease(TweenEquations.easeNone)
-				.repeatYoyo(Tween.INFINITY, 0)
-				.build()
-				.start(TweenPlugin.manager);*/
+
+		var options: TweenOptions = { type: FlxTween.PINGPONG, ease: null }
+		FlxTween.tween(instructionsText.scale, { x: 1.2, y: 1.2 }, 0.7, options);
 	}
 
 	private function fadingFinished(): Void {

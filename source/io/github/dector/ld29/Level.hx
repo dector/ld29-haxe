@@ -72,7 +72,7 @@ class ShotResult {
 	public var type: ShotResultType;
 	public var message: String;
 
-	function new() {
+	public function new() {
 		type = ShotResultType.WRONG;
 	}
 
@@ -80,7 +80,7 @@ class ShotResult {
 		return type;
 	}
 
-	function setType(type: ShotResultType): Void {
+	public function setType(type: ShotResultType): Void {
 		this.type = type;
 	}
 
@@ -88,7 +88,7 @@ class ShotResult {
 		return message;
 	}
 
-	function setMessage(message: String): Void {
+	public function setMessage(message: String): Void {
 		this.message = message;
 	}
 

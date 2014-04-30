@@ -20,6 +20,8 @@ class MusicManager {
 
 	private var music: FlxSound;
 
+	private var pausedSoft: Bool;
+
 	private function new() {
 		// FIXME sheet HaxeFlixel don't support mp3 for native apps
 		music = new FlxSound().loadEmbedded("assets/music.mp3", true, false);
@@ -73,4 +75,17 @@ class MusicManager {
 		return music.volume != 0;
 	}
 
+	public function pauseSoft(): Void {
+		if (! muted) {
+			pausedSoft = true;
+			pause();
+		}
+	}
+
+	public function playSoft(): Void {
+		if (pausedSoft) {
+			pausedSoft = false;
+			play();
+		}
+	}
 }

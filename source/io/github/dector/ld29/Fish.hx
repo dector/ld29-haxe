@@ -92,11 +92,9 @@ class Fish extends FlxSprite {
 		scale.x = size;
 		scale.y = size;
 
+		// FIXme bug fish is lagging
         origin.set(0, 0);
-		/*origin.x = 0;
-		origin.y = 0;
-		offset.x = 0;
-		offset.y = 0;*/
+		offset.set(0, 0);
 
 		emitterOffset.x = facing == FlxObject.LEFT ? size * 5 : width - size * 5;
 		emitterOffset.y = height - size * 4;

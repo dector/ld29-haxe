@@ -1,5 +1,8 @@
 package io.github.dector.ld29;
 
+import io.github.dector.ld29.Level.ShotResult;
+import flixel.FlxObject;
+import io.github.dector.ld29.Level.ShotResult;
 import flixel.util.FlxRandom;
 
 class Level0 extends Level {
@@ -10,35 +13,34 @@ class Level0 extends Level {
         super();
     }
 
-	/*override public ShotResult makePhoto(Pointer cam, List<FlxObject> objects) {
-		ShotResult result = new ShotResult();
+	override public function makePhoto(cam: Pointer, objects: List<FlxObject>): ShotResult {
+		var result = new ShotResult();
 
-		for (int i = 0; i < objects.size() && result.getType() != ShotResultType.LEVEL_FINISHED; i++) {
-		FlxObject object = objects.get(i);
+		for (object in objects) {
+			if (Std.is(object, Fish)) {
+				var fish = cast(object, Fish);
+				var fullInPointer = isObjectFullInPointer(cam, fish);
 
-		if (object instanceof Fish) {
-		Fish fish = (Fish) object;
+				if (fullInPointer) {
+					result.setType(Level.ShotResultType.LEVEL_FINISHED);
+				} else if (! result.hasMessage()) {
+					result.setMessage("Fish isn't fully visible in camera");
+				}
+			}
 
-		boolean fullInPointer = isObjectFullInPointer(cam, fish);
+			if (objects.isEmpty()) {
+				result.setMessage("No any fish in camera viewfinder");
+			}
+			if (result.getType() == Level.ShotResultType.LEVEL_FINISHED) {
+				result.setMessage(null);
+			}
 
-		if (fullInPointer) {
-		result.setType(ShotResultType.LEVEL_FINISHED);
-		} else if (! result.hasMessage()) {
-		result.setMessage("Fish isn't fully visible in camera");
-		}
-		}
-		}
-
-		if (objects.isEmpty()) {
-		result.setMessage("No any fish in camera viewfinder");
-		}
-
-		if (result.getType() == ShotResultType.LEVEL_FINISHED) {
-		result.setMessage(null);
+			if (result.getType() == Level.ShotResultType.LEVEL_FINISHED)
+				break;
 		}
 
 		return result;
-	}*/
+	}
 
 	override public function newColor(): Int {
 		return fishColors[FlxRandom.intRanged(0, fishColors.length - 1)];
