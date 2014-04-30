@@ -6,6 +6,10 @@ class Level0 extends Level {
 
 	private var fishColors: Array<Int> = [ 0xff0000, 0x00ff00, 0x0000ff ];
 
+    public function new() {
+        super();
+    }
+
 	/*override public ShotResult makePhoto(Pointer cam, List<FlxObject> objects) {
 		ShotResult result = new ShotResult();
 

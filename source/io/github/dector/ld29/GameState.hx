@@ -1,5 +1,7 @@
 package io.github.dector.ld29;
 
+import flixel.util.FlxRandom;
+import haxe.Timer;
 import flixel.text.FlxText;
 import flixel.group.FlxGroup;
 import flixel.FlxG;
@@ -25,11 +27,10 @@ class GameState extends BaseState {
 
 	private var levelDone: Bool;
 
-//	private long restoreInfoTimestamp;
-//	private long fadingTimestamp;
-//
+	private var restoreInfoTimestamp: Int;
+	private var fadingTimestamp: Int;
+
 //	private ActionStarter actionStarter;
-//
 
 	override public function create(): Void {
 
@@ -46,34 +47,33 @@ class GameState extends BaseState {
 
 		hud = new FlxGroup();
 
-//	infoText = new FlxText(10, 10, FlxG.width - 20);
-//	infoText.setFormat(null, 25);
-//	infoText.setText(Level.current.getGoalText());
-//	hud.add(infoText);
-//
-	musicIndicator = new FlxSprite(FlxG.width - 16 - 32, FlxG.height - 16 - 32);
-	musicIndicator.loadGraphic("assets/music.png", true, 16, 16);
-	musicIndicator.animation.add("on", [ 0 ], 0);
-	musicIndicator.animation.add("off", [ 1 ], 0);
-	musicIndicator.scale.set(2, 2);
-	musicIndicator.width = 32;
-	musicIndicator.height = 32;
-	musicIndicator.origin.set(0, 0);
-	hud.add(musicIndicator);
+        infoText = new FlxText(10, 10, FlxG.width - 20);
+        infoText.setFormat(null, 25);
+        infoText.text = Level.current.getGoalText();
+        hud.add(infoText);
 
-//	fishEmmiters = getFishesEmmiters();
+        musicIndicator = new FlxSprite(FlxG.width - 16 - 32, FlxG.height - 16 - 32);
+        musicIndicator.loadGraphic("assets/music.png", true, 16, 16);
+        musicIndicator.animation.add("on", [ 0 ], 0);
+        musicIndicator.animation.add("off", [ 1 ], 0);
+        musicIndicator.scale.set(2, 2);
+        musicIndicator.width = 32;
+        musicIndicator.height = 32;
+        musicIndicator.origin.set(0, 0);
+        hud.add(musicIndicator);
 
+    	fishEmmiters = getFishesEmmiters();
 
-	add(background);
-	add(fishes);
-//	add(fishEmmiters);
-	add(plants);
-	add(hud);
-	add(pointer);
+        add(background);
+        add(fishes);
+    	add(fishEmmiters);
+        add(plants);
+        add(hud);
+        add(pointer);
 
-	MusicManager.instance.play();
-	updateIndicators();
-//
+        MusicManager.instance.play();
+        updateIndicators();
+
 //	if (Level.current.getClass() == LevelLast.class) {
 //	levelDone = true;
 //	pointer.visible = false;
@@ -86,17 +86,17 @@ class GameState extends BaseState {
 		musicIndicator.animation.play(MusicManager.instance.isMuted() ? "off" : "on");
 	}
 
-//	private FlxGroup getFishesEmmiters() {
-//	FlxGroup emmiters = new FlxGroup();
-//
-//	for (FlxBasic obj : fishes.members) {
-//	Fish fish = (Fish) obj;
-//	emmiters.add(fish.getEmmiter());
-//	}
-//
-//	return emmiters;
-//	}
-//
+	private function getFishesEmmiters(): FlxGroup {
+        var emmiters = new FlxGroup();
+
+        for (obj in fishes.members) {
+            var fish = cast(obj, Fish);
+            emmiters.add(fish.getEmmiter());
+        }
+
+        return emmiters;
+	}
+
 
 	private function createFishes(): FlxGroup {
 		var fishes = new FlxGroup();
@@ -115,39 +115,37 @@ class GameState extends BaseState {
 		//	if (actionStarter == null) {
 		//	actionStarter = new ActionStarter();
 		//	}
-		//
-		//	int stepX = FlxG.width / Level.current.getMaxPlantsCount();
-		//	int diffX = stepX / 2;
-		//
-		//	for (int i = 0; i < Level.current.getMaxPlantsCount(); i++) {
-		//	final FlxSprite plant = new FlxSprite();
-		//	plant.loadGraphic("assets/plant.png", true, false, 12, 28);
-		//	plant.setColor(0x00ff00);
-		//	plant.addAnimation("stand", new int[] { 1 }, 1, true);
-		//	plant.addAnimation("wave", new int[] { 0, 1, 2, 1 }, 1, true);
-		//		//            plant.addAnimation("wave_long", new int[] { 0, 0, 1, 1, 2, 2, 1, 1 }, 1, true);
-		//		//            plant.addAnimation("wave_left", new int[] { 0, 0, 0, 1, 1 }, 1, true);
-		//		//            plant.addAnimation("wave_right", new int[] { 1, 2, 2, 2, 2 }, 1, true);
-		//	actionStarter.startDelayed(new Runnable() {
-		//	@Override
-		//	public void run() {
-		//	plant.play("wave", true, MathUtils.random(0, 2));
-		//	}
-		//	}, MathUtils.random(0, 2000));
-		//	plant.origin.make(0, 0);
-		//	int scale = MathUtils.random(2, 10);
-		//	plant.width = 12 * scale;
-		//	plant.height = 28 * scale;
-		//	plant.scale.make(scale, scale);
-		//		//            plant.x = MathUtils.random(0, FlxG.width);
-		//	float x = i * stepX + MathUtils.random(-1f, 1f) * diffX;
-		//	if (x < 0) x = plant.width / 2;
-		//	if (x > FlxG.width) x = FlxG.width - plant.width / 2;
-		//	plant.x = x;
-		//	plant.y = FlxG.height - plant.height;
-		//	plants.add(plant);
-		//	}
-		//
+
+        var stepX = FlxG.width / Level.current.getMaxPlantsCount();
+        var diffX = stepX / 2;
+
+        for (i in 0...Level.current.getMaxPlantsCount()) {
+            var plant = new FlxSprite();
+            plant.loadGraphic("assets/plant.png", true, 12, 28);
+            plant.color = 0x00ff00;
+            plant.animation.add("stand", [ 1 ], 0, true);
+            plant.animation.add("wave", [ 0, 1, 2, 1], 1, true);
+
+            var updatePlant = function() {
+                plant.animation.play("wave", true, FlxRandom.intRanged(0, 2));
+            };
+
+            Timer.delay(updatePlant, FlxRandom.intRanged(0, 2000));
+
+            var scale = FlxRandom.intRanged(2, 10);
+            plant.width = 12 * scale;
+            plant.height = 28 * scale;
+            plant.origin.set(0, 0);
+            plant.scale.set(scale, scale);
+
+            var x = i * stepX + FlxRandom.floatRanged(-1, 1) * diffX;
+            if (x < 0) x = plant.width / 2;
+            if (x > FlxG.width) x = FlxG.width - plant.width / 2;
+
+            plant.x = x;
+            plant.y = FlxG.height - plant.height;
+            plants.add(plant);
+        }
 
 		return plants;
 	}
@@ -160,7 +158,9 @@ class GameState extends BaseState {
 			MusicManager.instance.pause();
 
 			#if debug
-				Sys.exit(0);
+			    #if ! flash
+				    Sys.exit(0);
+                #end
 			#else
 				FlxG.switchState(new SplashState());
 			#end

@@ -53,7 +53,10 @@ class SplashState extends BaseState {
 		}
 
 		if (FlxG.keys.pressed.ESCAPE) {
+            #if ! flash
 			Sys.exit(0);
+            #else
+            #end
 		} else if (FlxG.keys.justPressed.ANY && ! FlxG.keys.pressed.F) {
 			startLevel(new Level0());
 		}
@@ -62,11 +65,15 @@ class SplashState extends BaseState {
 	private function startLevel(level: Level): Void {
 		Level.current = level;
 
-		FlxG.camera.fade(0x88000000, 0.7, fadingFinished);
+		FlxG.camera.fade(0x88000000, 0.7, false, fadingFinished);
 	}
 
 	private function flashFinished(): Void {
+        #if flash
+		fadingTime = Std.int(flash.Lib.getTimer()) + 1000;
+        #else
 		fadingTime = Std.int(Sys.time()) + 1000;
+        #end
 
 		instructionsText.visible = true;
 		controlsText.visible = true;

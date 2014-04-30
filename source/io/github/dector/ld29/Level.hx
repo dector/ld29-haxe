@@ -11,6 +11,10 @@ class Level {
 		current = new Level0();
 	}
 
+    public function new() {
+
+    }
+
 	private static var completeText: Array<String> = [
 		"Well done!",
 		"Awesome!",

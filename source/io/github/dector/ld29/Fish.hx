@@ -34,6 +34,7 @@ class Fish extends FlxSprite {
 		}
 
 		loadGraphic("assets/fish_t.png", false, 28, 12);
+        setFacingFlip(FlxObject.LEFT, true, false);
 
 		this.facing = facing;
 		init();
@@ -73,7 +74,11 @@ class Fish extends FlxSprite {
 
 		// dirty = true;
 
+        #if flash
+        lastBubbleTime = flash.Lib.getTimer();
+        #else
 		lastBubbleTime = Std.int(Sys.time()) + FlxRandom.intRanged(1000, 4000);
+        #end
 	}
 
 	public function getSize2(): Int {
@@ -87,6 +92,7 @@ class Fish extends FlxSprite {
 		scale.x = size;
 		scale.y = size;
 
+        origin.set(0, 0);
 		/*origin.x = 0;
 		origin.y = 0;
 		offset.x = 0;
@@ -104,7 +110,13 @@ class Fish extends FlxSprite {
 		emitter.x = x + emitterOffset.x;
 		emitter.y = y + emitterOffset.y;
 
-		var currentTime = Std.int(Sys.time());
+        var time;
+        #if flash
+        time = flash.Lib.getTimer();
+        #else
+        time = Sys.time();
+        #end
+		var currentTime = Std.int(time);
 		if (lastBubbleTime <= currentTime) {
 			bubble();
 			lastBubbleTime = currentTime + FlxRandom.intRanged(2000, 5000);
