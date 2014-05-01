@@ -8,6 +8,7 @@ class Bubble extends FlxParticle {
 		super();
 
 		loadGraphic("assets/bubble.png");
+        antialiasing = true;
 
 		exists = false;
 	}

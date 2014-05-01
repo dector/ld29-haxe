@@ -42,10 +42,9 @@ class Fish extends FlxSprite {
 	private function init(): Void {
 		hasPhoto = false;
 
-		/*int color = 0xff << 24
-		| MathUtils.random(0x00, 0xff) << 16
-		| MathUtils.random(0x00, 0xff) << 8
-		| MathUtils.random(0x00, 0xff);*/
+        var fishSize = Level.current.getSize();
+		setSize2(fishSize);
+
 		color = Level.current.newColor();
 
 		y = FlxRandom.intRanged(0, FlxG.height);
@@ -67,9 +66,6 @@ class Fish extends FlxSprite {
 		} else {
 			velocity.x = FlxRandom.intRanged(10, 100);
 		}
-
-		var fishSize = Level.current.getSize();
-		setSize2(fishSize);
 
 		// dirty = true;
 
